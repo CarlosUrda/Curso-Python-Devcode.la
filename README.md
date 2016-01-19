@@ -1,4 +1,4 @@
-# Curso-Python-DevcodeLa
+# Curso de Python en la plataforma Devcode.La
 >Ejercicios desarrollados en el Curso de Python en la plataforma Devcode.la
 
 Los ejercicios desarrollados son los siguientes:
