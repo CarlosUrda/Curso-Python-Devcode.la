@@ -1,4 +1,7 @@
-*.swp
+**/*.swp
+**/*.swn
+**/*.swa
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
