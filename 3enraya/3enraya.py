@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-import re
+import re, random
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -76,7 +76,7 @@ class Ui_wPrincipal(QtGui.QWidget):
         self.glTablero.addWidget(self.b1_2, 1, 2, 1, 1)
         self.b2_2 = QtGui.QPushButton(self.layoutWidget)
         self.b2_2.setEnabled(True)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.b2_2.sizePolicy().hasHeightForWidth())
@@ -235,7 +235,7 @@ class Ui_wPrincipal(QtGui.QWidget):
         self.b1_1.setObjectName(_fromUtf8("b1_1"))
         self.glTablero.addWidget(self.b1_1, 1, 1, 1, 1)
         self.layoutWidget1 = QtGui.QWidget(wPrincipal)
-        self.layoutWidget1.setGeometry(QtCore.QRect(57, 363, 241, 41))
+        self.layoutWidget1.setGeometry(QtCore.QRect(70, 370, 271, 41))
         self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
         self.lEleccionMaquina = QtGui.QHBoxLayout(self.layoutWidget1)
         self.lEleccionMaquina.setObjectName(_fromUtf8("lEleccionMaquina"))
@@ -253,7 +253,7 @@ class Ui_wPrincipal(QtGui.QWidget):
         self.cbMaquina1.setObjectName(_fromUtf8("cbMaquina1"))
         self.lEleccionMaquina.addWidget(self.cbMaquina1)
         self.eTurno = QtGui.QLabel(wPrincipal)
-        self.eTurno.setGeometry(QtCore.QRect(85, 330, 48, 21))
+        self.eTurno.setGeometry(QtCore.QRect(85, 331, 48, 21))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.eTurno.setFont(font)
@@ -295,7 +295,7 @@ class Ui_wPrincipal(QtGui.QWidget):
         self.lcdEmpate.setObjectName(_fromUtf8("lcdEmpate"))
         self.glPuntuacion.addWidget(self.lcdEmpate, 2, 1, 1, 1)
         self.leTurno = QtGui.QLineEdit(wPrincipal)
-        self.leTurno.setGeometry(QtCore.QRect(150, 330, 113, 26))
+        self.leTurno.setGeometry(QtCore.QRect(154, 330, 113, 26))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -304,6 +304,13 @@ class Ui_wPrincipal(QtGui.QWidget):
         self.leTurno.setFont(font)
         self.leTurno.setText(_fromUtf8(""))
         self.leTurno.setObjectName(_fromUtf8("leTurno"))
+        self.leMensaje = QtGui.QLineEdit(wPrincipal)
+        self.leMensaje.setGeometry(QtCore.QRect(432, 370, 191, 31))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.leMensaje.setFont(font)
+        self.leMensaje.setFrame(False)
+        self.leMensaje.setObjectName(_fromUtf8("leMensaje"))
         self.layoutWidget.raise_()
         self.layoutWidget.raise_()
         self.layoutWidget.raise_()
@@ -311,6 +318,7 @@ class Ui_wPrincipal(QtGui.QWidget):
         self.bReiniciar.raise_()
         self.eTurno.raise_()
         self.leTurno.raise_()
+        self.leMensaje.raise_()
 
         self.retranslateUi(wPrincipal)
         QtCore.QMetaObject.connectSlotsByName(wPrincipal)
@@ -325,21 +333,31 @@ class Ui_wPrincipal(QtGui.QWidget):
         for boton in self.__botonesTablero:
             QtCore.QObject.connect( boton, QtCore.SIGNAL(_fromUtf8("clicked()")),
                                     self.pincharBotonTablero)
+        QtCore.QObject.connect( self.cbMaquina1, 
+                                QtCore.SIGNAL(_fromUtf8("stateChanged(int)")),
+                                self.comprobarTurnoMaquina)
+        QtCore.QObject.connect( self.cbMaquina2, 
+                                QtCore.SIGNAL(_fromUtf8("stateChanged(int)")),
+                                self.comprobarTurnoMaquina)
         QtCore.QObject.connect( self.bReiniciar, QtCore.SIGNAL(_fromUtf8("clicked()")),
                                 self.pincharBotonReiniciar)
         self.iniciarPartida()
 
 
-    def pincharBotonTablero( self):
-        posicion = re.search( "b(\d+)_(\d+)", self.sender().objectName())
-        fila = int( posicion.group(1))
-        columna = int( posicion.group(2))
-        self.cambiarCasilla( fila, columna)
+    def pincharBotonTablero( self):                
+        if not self.cambiarCasilla( self.sender()):
+            self.leMensaje.setText( _fromUtf8("¡Movimiento incorrecto!"))
+
+        self.comprobarTurnoMaquina()
         
-    def cambiarCasilla( self, fila, columna):
+        
+    def cambiarCasilla( self, boton):
         if self.__movimiento == 9: return False
 
-       if self.__tablero[fila][columna] != 0: return False
+        posicion = re.search( "b(\d+)_(\d+)", boton.objectName())
+        fila = int( posicion.group(1))
+        columna = int( posicion.group(2))
+        if self.__tablero[fila][columna] != 0: return False
 
         boton.setText( "X" if self.__turno == 1 else "O")
         boton.setEnabled( False)
@@ -349,19 +367,20 @@ class Ui_wPrincipal(QtGui.QWidget):
         ganador = self.comprobarFinal( fila, columna)
         if ganador == 3:
             self.__turno = 1 if self.__turno == 2 else 2
-            self.leTurno.setText( "Jugador 1" if self.__turno == 1 else "Jugador 2")
+            self.leTurno.setText("Jugador 1" if self.__turno==1 else "Jugador 2")
+            self.leMensaje.setText( "")            
             return True
-        elif ganador == 1:
-            self.__victorias1 += 1
-            self.lcdJugador1.display( self.__victorias1)
-            # Poner un mensaje del resultado
-        elif ganador == 2:
-            self.__victorias2 += 1
-            self.lcdJugador2.display( self.__victorias2)
+        elif ganador == 1 or ganador == 2:
+            txtGanador = str( ganador)
+            self.__dict__["_Ui_wPrincipal__victorias" + txtGanador] += 1
+            self.__dict__["lcdJugador" + txtGanador].display( 
+                self.__dict__["_Ui_wPrincipal__victorias" + txtGanador])
+            self.leMensaje.setText(_fromUtf8("¡Vence Jugador "+txtGanador+"!"))
         elif ganador == 0:
             self.__empates += 1
             self.lcdEmpate.display( self.__empates)
-        
+            self.leMensaje.setText( _fromUtf8("¡Empate!"))
+          
         self.finalizarPartida()
         return True             
 
@@ -376,32 +395,59 @@ class Ui_wPrincipal(QtGui.QWidget):
 
     def iniciarPartida( self):
         self.__turno = 1
+        color = _fromUtf8( "color:rgb(255,255,255); background:rgb(8, 50, 255)")
         for boton in self.__botonesTablero:
+            boton.setStyleSheet( color)
             boton.setText( " ")
             boton.setEnabled( True)
+
         self.__tablero = [[0]*3,[0]*3,[0]*3]
         self.__movimiento = 0
         self.leTurno.setText( "Jugador 1" if self.__turno == 1 else "Jugador 2")
+        self.leMensaje.setText( "")
 
-        while movimiento < 9:
-            if self.cbMaquina1.isChecked():
-                (fila, columna) = self.generarMovimiento()
-                self.cambiarCasilla( 
+        self.comprobarTurnoMaquina()
 
+    def comprobarTurnoMaquina( self):
+        while self.__movimiento < 9:
+            if not self.__dict__["cbMaquina" + str( self.__turno)].isChecked():
+                break
+            (fila, columna) = self.generarMovimiento()
+            self.cambiarCasilla( self.__dict__["b"+str(fila)+"_"+str(columna)])
 
-
+    def generarMovimiento( self):
+        return (random.randint(0,2), random.randint(0,2))
 
     def comprobarFinal( self, fil, col):
+        color = _fromUtf8( "color:rgb(5, 5, 255); background:rgb(228, 0, 5);")
         if (self.__tablero[fil][col] == self.__tablero[(fil+1)%3][col] and 
-            self.__tablero[fil][col] == self.__tablero[(fil+2)%3][col] or 
-            self.__tablero[fil][col] == self.__tablero[fil][(col+1)%3] and 
-            self.__tablero[fil][col] == self.__tablero[fil][(col+2)%3] or 
-            fil == col and 
+            self.__tablero[fil][col] == self.__tablero[(fil+2)%3][col]):
+            self.__dict__["b"+str(fil)+"_"+str(col)].setStyleSheet(color)
+            self.__dict__["b"+str((fil+1)%3)+"_"+str(col)].setStyleSheet(color)
+            self.__dict__["b"+str((fil+2)%3)+"_"+str(col)].setStyleSheet(color)
+            return self.__turno
+
+        if (self.__tablero[fil][col] == self.__tablero[fil][(col+1)%3] and 
+            self.__tablero[fil][col] == self.__tablero[fil][(col+2)%3]):
+            self.__dict__["b"+str(fil)+"_"+str(col)].setStyleSheet(color)
+            self.__dict__["b"+str(fil)+"_"+str((col+1)%3)].setStyleSheet(color)
+            self.__dict__["b"+str(fil)+"_"+str((col+2)%3)].setStyleSheet(color)
+            return self.__turno
+
+        if (fil == col and 
             self.__tablero[fil][col] == self.__tablero[(fil+1)%3][(col+1)%3] and
-            self.__tablero[fil][col] == self.__tablero[(fil+2)%3][(col+2)%3] or 
-            abs(fil-col) == 2 and 
+            self.__tablero[fil][col] == self.__tablero[(fil+2)%3][(col+2)%3]): 
+            self.__dict__["b"+str(fil)+"_"+str(col)].setStyleSheet(color)
+            self.__dict__["b"+str((fil+1)%3)+"_"+str((col+1)%3)].setStyleSheet(color)
+            self.__dict__["b"+str((fil+2)%3)+"_"+str((col+2)%3)].setStyleSheet(color)
+            return self.__turno
+
+        if (abs(fil-col) == 2 and 
             self.__tablero[fil][col] == self.__tablero[(fil+1)%3][(col-1)%3] and
             self.__tablero[fil][col] == self.__tablero[(fil+2)%3][(col-2)%3]):
+            self.__dict__["b"+str(fil)+"_"+str(col)].setStyleSheet(color)
+            self.__dict__["b"+str((fil+1)%3)+"_"+str((col-1)%3)].setStyleSheet(color)
+            self.__dict__["b"+str((fil+2)%3)+"_"+str((col-2)%3)].setStyleSheet(color)
             return self.__turno
 
         if self.__movimiento == 9: return 0
