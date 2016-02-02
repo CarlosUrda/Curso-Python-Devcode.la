@@ -22,7 +22,7 @@ import random, time
 PASOS_META = 80
 MAX_PASOS_POR_TURNO = PASOS_META // 10
 
-print( "###### CARRERA DE CABALLOS PYTHON ######\n")
+print( "######### CARRERA DE CABALLOS PYTHON #########\n")
 
 pasosMeta = PASOS_META
 
@@ -53,10 +53,11 @@ while True:
     
 print( "\nNúmero de pasos máximo por turno: %d" % pasosMaxPorTurno)
 print( "Número de pasos para llegar a meta: %d\n" % pasosMeta)
-print( "La carrera comienza en:", end=" ")
+input( "\nPulsa cualquier tecla para continuar...\n")
+print( "La carrera comienza en...")
 for i in [3, 2, 1, "¡YA!\n"]:
     time.sleep( 1);
-    print( i, end=" ")
+    print( i)
 
 print()
 pasosCaballo1 = pasosCaballo2 = 0
