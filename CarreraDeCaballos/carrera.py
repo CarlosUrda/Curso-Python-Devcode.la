@@ -54,15 +54,15 @@ while True:
 print( "\nNúmero de pasos máximo por turno: %d" % pasosMaxPorTurno)
 print( "Número de pasos para llegar a meta: %d\n" % pasosMeta)
 print( "La carrera comienza en:", end=" ")
-for i in [3, 2, 1, "¡YA!"]:
-#    time.sleep( 2);
+for i in [3, 2, 1, "¡YA!\n"]:
+    time.sleep( 1);
     print( i, end=" ")
 
 print()
 pasosCaballo1 = pasosCaballo2 = 0
 
 while True:
-#    time.sleep(1)
+    time.sleep(1)
     pasosCaballo1 += random.randint( 0, pasosMaxPorTurno)
     pasosCaballo2 += random.randint( 0, pasosMaxPorTurno)
     print( "Caballo1: " + "="*pasosCaballo1)
