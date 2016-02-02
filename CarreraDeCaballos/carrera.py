@@ -22,39 +22,37 @@ import random, time
 PASOS_META = 80
 MAX_PASOS_POR_TURNO = PASOS_META // 10
 
-print( "#### CARRERA DE CABALLOS PYTHON ####")
+print( "###### CARRERA DE CABALLOS PYTHON ######\n")
 
 pasosMeta = PASOS_META
-pasosMaxPorTurno = MAX_PASOS_POR_TURNO
+
+while True:
+    pasos = input("Pasos línea de meta [%d]: " % PASOS_META).strip()
+    if not pasos: break
+    try:
+        pasosMeta = int( pasos)
+    except:
+        print( "Tienes que introducir un número.")
+        continue
+    if pasosMeta > 0: break
+    print( "El número de pasos como final de carrera debe ser > 0")
+
 
 while True:    
     pasos = input( "Pasos máximos por turno [0 aleatorio]: ").strip()
-    if not pasos: break
+    if not pasos or pasos == "0": 
+       pasosMaxPorTurno = random.randint( 0, pasosMeta-1)
+       break
     try:
         pasosMaxPorTurno = int( pasos)
     except:
         print( "Tienes que introducir un número")
         continue
-
-    if pasosMaxPorTurno > 0: break
-    elif pasosMaxPorTurno ==  0:
-        pasosMaxPorTurno = random.randint( 1, MAX_PASOS_POR_TURNO)
-        break
-    print( "Error: El número de pasos debe ser positivo")
+    if pasosMaxPorTurno > 0 and pasosMaxPorTurno < pasosMeta: break
+    print( "Error: El número de pasos debe estar en [0,%d]" % pasosMaxPorTurno)
     
-while True:
-    pasos = input("Pasos línea de meta [%d]: " % PASOS_META).strip()
-    if not pasos: break
-    try:
-        pasosFinalCarrera = int( pasos)
-    except:
-        print( "Tienes que introducir un número.")
-        continue
-    if pasosFinalCarrera > 0: break
-    print( "El número de pasos como final de carrera debe ser > 0")
-
-print( "Número de pasos máximo por turno: %d" % pasosMaxPorTurno)
-print( "Número de pasos para llegar a meta: %d\n" % pasosFinalCarrera)
+print( "\nNúmero de pasos máximo por turno: %d" % pasosMaxPorTurno)
+print( "Número de pasos para llegar a meta: %d\n" % pasosMeta)
 print( "La carrera comienza en:", end=" ")
 for i in [3, 2, 1, "¡YA!"]:
 #    time.sleep( 2);
@@ -65,12 +63,12 @@ pasosCaballo1 = pasosCaballo2 = 0
 
 while True:
 #    time.sleep(1)
-    pasosCaballo1 += int( random.random() * pasosMaxPorTurno) + 1
-    pasosCaballo2 += int( random.random() * pasosMaxPorTurno) + 1
+    pasosCaballo1 += random.randint( 0, pasosMaxPorTurno)
+    pasosCaballo2 += random.randint( 0, pasosMaxPorTurno)
     print( "Caballo1: " + "="*pasosCaballo1)
     print( "Caballo2: " + "="*pasosCaballo2)
-    print( "Meta:    " + " "*pasosFinalCarrera + "|")
-    if max( pasosCaballo1, pasosCaballo2) >= pasosFinalCarrera: break
+    print( "Meta:    " + " "*pasosMeta + "|")
+    if max( pasosCaballo1, pasosCaballo2) >= pasosMeta: break
 
 if pasosCaballo1 == pasosCaballo2: print( "EMPATE")
 else: print( "GANADOR CABALLO %d" % (1 if pasosCaballo1 > pasosCaballo2 else 2))
