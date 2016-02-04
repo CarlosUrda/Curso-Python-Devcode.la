@@ -32,7 +32,7 @@ class Caballo:
     Caballo de carreras.
     """
 
-    __MAX_PASOS_POR_TURNO = 10 
+    __MAX_PASOS_POR_TURNO = 10
   
  
     def __init__( self, nombre = None, maxPasosPorTurno = None):
@@ -41,20 +41,35 @@ class Caballo:
         @param nombre Nombre del caballo.
         @param maxPasosPorTurno Máximo de pasos que puede alcanzar en un turno.
         """
-        self.__nombre = nombre
-        self.__maxPasosPorTurno = maxPasosPorTurno
+        self.nombre = nombre
+        self.maxPasosPorTurno = maxPasosPorTurno
         self.__carreras = []
         self.__pasosCarreraActual = 0
 
 
-    @property
+    def __str__( self):
+        """
+        Equivalente a toString(). Representar el objeto como una cadena.
+        """
+        return self.nombre
+
+
     def MAX_PASOS_POR_TURNO():
         """
         Obtenertener el valor por defecto del número máximo de pasos por turno 
         que puede dar un caballo.
         @return Valor por defecto de número máximo de pasos por turno.
         """
-        return __MAX_PASOS_POR_TURNO
+        return Caballo.__MAX_PASOS_POR_TURNO
+
+
+    @property
+    def nombre( self):
+        """
+        Obtener el nombre del Caballo.
+        @return Nombre del caballo.
+        """
+        return self.__nombre
 
 
     @nombre.setter
@@ -71,12 +86,11 @@ class Caballo:
 
 
     @property
-    def nombre( self):
+    def maxPasosPorTurno( self):
         """
         Obtener el nombre del Caballo.
-        @return Nombre del caballo.
         """
-        return self.__nombre
+        return self.__maxPasosPorTurno
 
 
     @maxPasosPorTurno.setter
@@ -85,8 +99,8 @@ class Caballo:
         Cambiar el número de pasos máximos por turno que puede dar el caballo.
         @param maxPasos Nuevo número máximo de pasos por turno.
         """
-        if maxPasos is None:
-            self.__maxPasosPorTurno = __MAX_PASOS_POR_TURNO
+        if not maxPasos:
+            self.__maxPasosPorTurno = Caballo.__MAX_PASOS_POR_TURNO
             return
 
         try:
@@ -99,14 +113,6 @@ class Caballo:
             raise ArgumentoException( "Argumento maxPasos < 1.")
 
         self.__maxPasosPorTurno = maxPasos
-
-
-    @property
-    def maxPasosPorTurno( self):
-        """
-        Obtener el nombre del Caballo.
-        """
-        return self.__maxPasosPorTurno
 
 
     @property
@@ -153,18 +159,28 @@ class Carrera:
         Constructor.
         @parama pasosMeta Pasos donde se encuentra la línea de meta.
         """
-        self.__pasosMeta = pasosMeta
-        self.__nombre = nombre
+        self.pasosMeta = pasosMeta
+        self.nombre = nombre
         self.__caballos = dict()
         self.__ganadores = []
 
-    @property
+
     def PASOS_META():
         """
         Obtener el valor de pasos de la línea de meta a asignar por defecto.
         @return Pasos de la línea de meta por defecto.
         """
-        return __PASOS_META
+        return Carrera.__PASOS_META
+
+
+    @property
+    def nombre( self):
+        """
+        Obtener el nombre del Caballo.
+        @return Nombre del caballo.
+        """
+        return self.__nombre
+
 
     @nombre.setter
     def nombre( self, nombre = None):
@@ -180,12 +196,12 @@ class Carrera:
 
 
     @property
-    def nombre( self):
+    def pasosMeta( self):
         """
-        Obtener el nombre del Caballo.
-        @return Nombre del caballo.
+        Obtener el número de pasos donde se encuentra la línea de meta.
+        @return Número de pasos de meta.
         """
-        return self.__nombre
+        return self.__pasosMeta
 
 
     @pasosMeta.setter
@@ -194,46 +210,47 @@ class Carrera:
         Cambiar el número de pasos donde se encuentra la línea de meta.
         @param pasosMeta Nuevo número de pasos de la línea de meta.
         """
-        if pasosMeta is None:
-            self.__pasosMeta = __PASOS_META
+        if not pasosMeta:
+            self.__pasosMeta = Carrera.__PASOS_META
             return
 
         try:
-            maxPasos = int( maxPasos)
+            pasosMeta = int( pasosMeta)
         except ValueError as e:
             print( e)
             raise ArgumentoException( "Argumento pasosMeta inválido.")
 
-        if maxPasos < 1:
+        if pasosMeta < 1:
             raise ArgumentoException( "Argumento pasosMeta < 1.")
 
         self.__pasosMeta = pasosMeta
 
-
+  
     @property
-    def pasosMeta( self):
+    def ganadores( self):
         """
-        Obtener el número de pasos donde se encuentra la línea de meta.
+        Obtener los ganadores de la carrera
+        @return Tupla con los ganadores.
         """
-        return self.__pasosMeta
+        return tuple( self.__ganadores)
 
-   
-    def numeroDeInscritos( self)
+
+    def numeroDeInscritos( self):
         """
         Devolver el número de caballos inscritos en la carrera.
         """
         return len( self.__caballos)
 
 
-    def visualizarTurno():
+    def visualizarTurno( self):
         """
         Visualizar el estado actual de la carrera.
         """
-        for caballo, datos in self.__caballos:
-            print( "$2d-%10s: %s" % 
-                   (datos["dorsal"], caballo.nombre[:10], "="*datos["pasos"]))
+        for caballo, datos in self.__caballos.items():
+            print( "%2d-%12s: %s" % 
+                   (datos["dorsal"], caballo.nombre[:12], "="*datos["pasos"]))
 
-        print( "%10s:%s" % ("Meta", " "*self.__pasosMeta + "|"))
+        print( "%15s:%s" % ("Meta", " "*self.__pasosMeta + "|"))
             
 
     def registrarCaballo( self, caballo):
@@ -262,7 +279,7 @@ class Carrera:
             caballo.avanzarPasos()
             datos["pasos"] = caballo.pasosCarreraActual
             if (not esFinalDeCarrera and
-                caballo.pasosCarreraActual >= self.pasosMeta)
+                caballo.pasosCarreraActual >= self.pasosMeta):
                 esFinalDeCarrera = True
         return esFinalDeCarrera
 
@@ -272,11 +289,11 @@ class Carrera:
         Calcular los puestos en que han quedado los caballos participantes y
         cuáles son los ganadores de la carrera.
         """
-        enOrden = sorted( self.__caballos.items(), key=lambda x: x[1]["pasos"], 
-                          reverse=True)
+        self.__clasificacion = sorted(self.__caballos.items(), 
+                                      key=lambda x: x[1]["pasos"], reverse=True)
         puesto = 1
-        pasosAnterior = enOrden[0][1]["pasos"]
-        for caballo, datos in enOrden:
+        pasosAnterior = self.__clasificacion[0][1]["pasos"]
+        for caballo, datos in self.__clasificacion:
            if datos["pasos"] < pasosAnterior:
                 puesto += 1
                 pasosAnterior = datos["pasos"]
@@ -307,27 +324,31 @@ class Carrera:
 
         return caballo in self.__ganadores
 
-    def ganadores( self):
-        """
-        Obtener los ganadores de la carrera
 
-        
+    def mostrarClasificacion( self):
+        print( "\n**** CLASIFICACIÓN DE LA CARRERA %s ****" % self.nombre)
+        for caballo, datos in self.__clasificacion:
+            print( "%dº.- Dorsal %2d | %20s | Pasos %d" % 
+                   (datos["puesto"], datos["dorsal"], caballo.nombre, 
+                    datos["pasos"]))
+     
 
 
 print( "#########  CARRERA DE CABALLOS PYTHON  #########\n")
 
 while True:
-    nombre = input( "Introduce el nombre de la carrera: ")
-    pasos = input( "Pasos línea de meta [%d]: " % Carrera.PASOS_META)
+    nombre = input( "\nIntroduce el nombre de la carrera: ")
+    pasos = input( "Pasos línea de meta [%d]: " % Carrera.PASOS_META())
     try:
         carrera = Carrera( pasos, nombre)
     except ArgumentoException as e:
         print( e)
+        print( "Introduce los datos de la carrera correctamente.")
         continue
     break
 
 while True:
-    numeroDeCaballos = input( "Introduce el número de caballos: ")
+    numeroDeCaballos = input( "\nIntroduce el número de caballos: ")
     if not numeroDeCaballos.strip(): continue
     try:
         numeroDeCaballos = int( numeroDeCaballos)
@@ -341,13 +362,16 @@ while True:
 
 for i in range( numeroDeCaballos):
     while True:
-        nombre = input( "Nombre del nuevo Caballo: ")
-        maxPasos = input( "Pasos máximos por turno del caballo [%d]: " % 
-                          Caballo.MAX_PASOS_POR_TURNO)
+        print( "\nIntroduce los datos del Caballo %d" % (i+1))
+        nombre = input( "\tNombre: ")
+        maxPasos = input( "\tPasos máximos por turno [%d]: " % 
+                          Caballo.MAX_PASOS_POR_TURNO())
         try:
             caballo = Caballo( nombre, maxPasos)
         except ArgumentoException as e:
             print( e)
+            print( "Introduce los datos del caballo correctamente")
+            continue
         break
     carrera.registrarCaballo( caballo)
 
@@ -355,13 +379,18 @@ input( "\nPulsa cualquier tecla para continuar...\n")
 print( "La carrera comienza en...")
 for i in [3, 2, 1, "¡YA!\n"]:
     time.sleep( 1)
-    print( i, end=" ")
+    print( i)
 print()
 
-while not carrera.avanzarTurno(): 
+esFinalDeCarrera = False
+while not esFinalDeCarrera: 
     time.sleep(1)
+    esFinalDeCarrera = carrera.avanzarTurno()
     carrera.visualizarTurno()
+    
 carrera.calcularPuestos()
+carrera.mostrarClasificacion()
+print( "Ganadores: " + str( [caballo.nombre for caballo in carrera.ganadores]))
 
 
 
