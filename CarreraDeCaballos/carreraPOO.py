@@ -88,7 +88,8 @@ class Caballo:
     @property
     def maxPasosPorTurno( self):
         """
-        Obtener el nombre del Caballo.
+        Obtener el número máximo de pasos por turno que puede dar el caballo.
+        @return Número de pasos máximo.
         """
         return self.__maxPasosPorTurno
 
@@ -118,14 +119,15 @@ class Caballo:
     @property
     def pasosCarreraActual( self):
         """
-        Obtener el nombre del Caballo.
+        Obtener el número de pasos realizados hasta ahora en la carrera actual.
+        @return Número de pasos recorridos.
         """
         return self.__pasosCarreraActual
 
 
     def inscribirCarrera( self, carrera):
         """ 
-        Añadir una carrera entre las carreras en las cuales el caballo ha 
+        Añadir una carrera a las carreras en las cuales el caballo ha 
         participado.
         @param carrera Carrera a incluir.
         """
@@ -141,7 +143,7 @@ class Caballo:
 
     def avanzarPasos( self):
         """
-        Avanzar un caballo un número de pasos en un turno en la carrera actual. 
+        Avanzar un número de pasos en un turno en la carrera actual. 
         """
         self.__pasosCarreraActual += random.randrange( self.maxPasosPorTurno+1)
 
@@ -238,6 +240,7 @@ class Carrera:
     def numeroDeInscritos( self):
         """
         Devolver el número de caballos inscritos en la carrera.
+        @return Número de caballos inscritos.
         """
         return len( self.__caballos)
 
@@ -286,8 +289,10 @@ class Carrera:
 
     def calcularPuestos( self):
         """
-        Calcular los puestos en que han quedado los caballos participantes y
-        cuáles son los ganadores de la carrera.
+        Calcular los puestos de los caballos en la clasificación resultante de
+        la carrera. También guarda los ganadores de la carrera.
+        MEJORA: Considerar si la carrera ha finalizado o no para calcular los
+        puestos durante la carrera sin ganadores, o al final de la carrera.
         """
         self.__clasificacion = sorted(self.__caballos.items(), 
                                       key=lambda x: x[1]["pasos"], reverse=True)
@@ -326,6 +331,10 @@ class Carrera:
 
 
     def mostrarClasificacion( self):
+        """
+        Visualizar la clasificación de la carrera. Antes se ha debido llamar a
+        calcularPuestos.
+        """
         print( "\n**** CLASIFICACIÓN DE LA CARRERA %s ****" % self.nombre)
         for caballo, datos in self.__clasificacion:
             print( "%dº.- Dorsal %2d | %20s | Pasos %d" % 
