@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 #coding=utf-8
 
-""" 
-    Carrera de caballos donde en cada turno cada caballo avanza un número 
+"""
+    Carrera de caballos donde en cada turno cada caballo avanza un número
     aleatorio de pasos. Determinar el ganador.
 """
 
@@ -21,7 +21,7 @@ import random, time
 
 def llegoAMeta( caballo, pasosMeta):
     """
-    Comprobar si un caballo ha llegado a la meta. El estado resultante se 
+    Comprobar si un caballo ha llegado a la meta. El estado resultante se
     almacena en el caballo.
     @param caballo Caballo a comprobar si llegó a meta.
     @param pasosMeta Pasos donde está la línea de meta.
@@ -51,7 +51,7 @@ def mostrarCarrera( caballo1, caballo2, pasosMeta):
     print( "%10s: %s" % (caballo1["nombre"][:10], "="*caballo1["pasos"]))
     print( "%10s: %s" % (caballo2["nombre"][:10], "="*caballo2["pasos"]))
     print( "%10s:%s" % ("Meta", " "*pasosMeta + "|"))
-    
+
 
 
 
@@ -80,9 +80,9 @@ while True:
     if pasosMeta > 0: break
     print( "El número de pasos como final de carrera debe ser > 0")
 
-while True:    
+while True:
     pasos = input( "Pasos máximos por turno [0 aleatorio]: ").strip()
-    if not pasos or pasos == "0": 
+    if not pasos or pasos == "0":
         pasosMaxPorTurno = random.randint( 1, pasosMeta)
         break
     try:
@@ -92,7 +92,7 @@ while True:
         continue
     if pasosMaxPorTurno > 0 and pasosMaxPorTurno <= pasosMeta: break
     print( "Error: El número de pasos debe estar en [0,%d]" % pasosMeta)
-    
+
 print( "\nNúmero de pasos máximo por turno: %d" % pasosMaxPorTurno)
 print( "Número de pasos para llegar a meta: %d\n" % pasosMeta)
 input( "\nPulsa cualquier tecla para continuar...\n")
@@ -107,11 +107,11 @@ while True:
     avanzarTurno( caballo1, pasosMaxPorTurno)
     avanzarTurno( caballo2, pasosMaxPorTurno)
     mostrarCarrera( caballo1, caballo2, pasosMeta)
-    if llegoAMeta( caballo1, pasosMeta) | llegoAMeta( caballo2, pasosMeta): 
+    if llegoAMeta( caballo1, pasosMeta) | llegoAMeta( caballo2, pasosMeta):
         break
 
 print()
-if caballo1["meta"] and caballo2["meta"]: 
+if caballo1["meta"] and caballo2["meta"]:
     print( "EMPATE")
 else:
     ganador = caballo1["nombre"] if caballo1["meta"] else caballo2["nombre"]
